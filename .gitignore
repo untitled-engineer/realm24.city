@@ -1,5 +1,9 @@
+
+# app
+/src/main/resources/application.yaml
 /src/main/resources/application-dev.yaml
 
+# idea
 /dataSources/
 /.ideaDataSources/
 /target/
@@ -8,6 +12,7 @@
 .project
 .classpath
 
+# fs
 *.iml
 .DS_Store
 

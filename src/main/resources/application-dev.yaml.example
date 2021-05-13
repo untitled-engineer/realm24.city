@@ -1,0 +1,69 @@
+server:
+  address: localhost
+  port: 8080
+logging:
+  level: debug
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    initialization-mode: always
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/web-app
+    username: web-app
+    password: web-app
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+      globally_quoted_identifiers: true
+      jdbc:
+        lob:
+          non_contextual_creation: true
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: email-smtp.eu-west-1.amazonaws.com
+    username: AKIA3EVY
+    password: BPH7+
+    port: 465
+    protocol: smtps
+    smtp:
+      auth: true
+      startls:
+        enabled: true
+        required: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 577619062209
+            client-secret: M4i4Q2kHpU8EKR
+            scope:
+              - https://www.googleapis.com/auth/userinfo.email # View your email address
+              - https://www.googleapis.com/auth/userinfo.profile # See your personal info, including any personal info you've made publicly available
+              # - openid ? want work ?
+          github:
+            client-id: 9457c7f
+            client-secret: 89cd70ec9332da
+          facebook:
+            client-id: 5051
+            client-secret: 6e7902a27e37f
+            scope:
+              - email
+              - public_profile
+        provider:
+          facebook:
+            authorizationUri: https://www.facebook.com/v3.0/dialog/oauth
+            tokenUri: https://graph.facebook.com/v3.0/oauth/access_token
+            userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,name_format,picture,email,verified,is_verified # ,picture.width(250).height(250)
+mail:
+  debug: true
+vaadin:
+  pnpm-enabled: true
+upload:
+  path: /var/www/uploads

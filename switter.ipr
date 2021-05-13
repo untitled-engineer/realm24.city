@@ -10,30 +10,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="switter" />
+        <module name="realm" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="switter" target="1.8" />
+      <module name="realm" target="1.8" />
     </bytecodeTargetLevel>
-  </component>
-  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="switter@localhost" uuid="8503e843-7819-40a4-ae56-aa9f9f14fcf7">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/switter</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="switter/Hibernate" uuid="bb3dd577-e0eb-4270-aaca-2a68ec5ff277">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <imported>true</imported>
-      <remarks>Hibernate</remarks>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
   </component>
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
@@ -47,7 +29,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="switter" options="-parameters" />
+      <module name="realm" options="-parameters" />
     </option>
   </component>
   <component name="MavenProjectsManager">
@@ -55,50 +37,6 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
-    </option>
-  </component>
-  <component name="NullableNotNullManager">
-    <option name="myDefaultNullable" value="javax.annotation.Nullable" />
-    <option name="myDefaultNotNull" value="org.jetbrains.annotations.NotNull" />
-    <option name="myNullables">
-      <value>
-        <list size="14">
-          <item index="0" class="java.lang.String" itemvalue="com.android.annotations.Nullable" />
-          <item index="1" class="java.lang.String" itemvalue="io.reactivex.rxjava3.annotations.Nullable" />
-          <item index="2" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNullable" />
-          <item index="3" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableDecl" />
-          <item index="4" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
-          <item index="5" class="java.lang.String" itemvalue="androidx.annotation.Nullable" />
-          <item index="6" class="java.lang.String" itemvalue="org.eclipse.jdt.annotation.Nullable" />
-          <item index="7" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
-          <item index="8" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
-          <item index="9" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
-          <item index="10" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
-          <item index="11" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.Nullable" />
-          <item index="12" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableType" />
-          <item index="13" class="java.lang.String" itemvalue="io.reactivex.annotations.Nullable" />
-        </list>
-      </value>
-    </option>
-    <option name="myNotNulls">
-      <value>
-        <list size="14">
-          <item index="0" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNonNull" />
-          <item index="1" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.NonNull" />
-          <item index="2" class="java.lang.String" itemvalue="io.reactivex.annotations.NonNull" />
-          <item index="3" class="java.lang.String" itemvalue="androidx.annotation.NonNull" />
-          <item index="4" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullType" />
-          <item index="5" class="java.lang.String" itemvalue="lombok.NonNull" />
-          <item index="6" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
-          <item index="7" class="java.lang.String" itemvalue="io.reactivex.rxjava3.annotations.NonNull" />
-          <item index="8" class="java.lang.String" itemvalue="com.android.annotations.NonNull" />
-          <item index="9" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
-          <item index="10" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullDecl" />
-          <item index="11" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
-          <item index="12" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
-          <item index="13" class="java.lang.String" itemvalue="org.eclipse.jdt.annotation.NonNull" />
-        </list>
-      </value>
     </option>
   </component>
   <component name="Palette2">
@@ -222,12 +160,9 @@
       </item>
     </group>
   </component>
-  <component name="ProjectCodeStyleConfiguration">
-    <option name="PREFERRED_PROJECT_CODE_STYLE" value="Default" />
-  </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/switter.iml" filepath="$PROJECT_DIR$/switter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/realm.iml" filepath="$PROJECT_DIR$/realm.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
@@ -241,11 +176,6 @@
       <option name="id" value="vaadin-prereleases" />
       <option name="name" value="vaadin-prereleases" />
       <option name="url" value="https://maven.vaadin.com/vaadin-prereleases/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="repository.spring.release" />
-      <option name="name" value="Spring GA Repository" />
-      <option name="url" value="https://repo.spring.io/release" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
@@ -270,40 +200,6 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-  </component>
-  <component name="dataSourceStorageLocal" created-in="IU-211.7142.45">
-    <data-source name="switter@localhost" uuid="8503e843-7819-40a4-ae56-aa9f9f14fcf7">
-      <database-info product="PostgreSQL" version="13.2" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.2.5" dbms="POSTGRES" exact-version="13.2" exact-driver-version="42.2">
-        <identifier-quote-string>&quot;</identifier-quote-string>
-      </database-info>
-      <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
-      <secret-storage>master_key</secret-storage>
-      <user-name>webapp</user-name>
-      <schema-mapping>
-        <introspection-scope>
-          <node negative="1">
-            <node kind="database" qname="@">
-              <node kind="schema" qname="@" />
-            </node>
-            <node kind="database" qname="switter" />
-          </node>
-        </introspection-scope>
-      </schema-mapping>
-    </data-source>
-    <data-source name="switter/Hibernate" uuid="bb3dd577-e0eb-4270-aaca-2a68ec5ff277">
-      <database-info product="PostgreSQL" version="13.2" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.2.5" dbms="POSTGRES" exact-version="13.2" exact-driver-version="42.2">
-        <identifier-quote-string>&quot;</identifier-quote-string>
-      </database-info>
-      <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
-      <user-name>postgres</user-name>
-      <schema-mapping>
-        <introspection-scope>
-          <node kind="database" qname="@">
-            <node kind="schema" qname="@" />
-          </node>
-        </introspection-scope>
-      </schema-mapping>
-    </data-source>
   </component>
   <component name="libraryTable">
     <library name="Maven: antlr:antlr:2.7.7">

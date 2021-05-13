@@ -1,3 +1,8 @@
+
+```bash
+cp src/main/resources/application-dev.yaml.example src/main/resources/application-dev.yaml
+```
+
 ```bash
 ./mvnw spring-boot:run
 ```
@@ -11,7 +16,7 @@ Alternatively, you can build the JAR file with
 and then run the JAR file, as follows:
 
 ```bash
-java -jar target/gs-serving-web-content-0.1.0.jar
+java -jar target/${appName}-0.1.0.jar
 ```
 
 The steps described here create a runnable JAR.
