@@ -32,7 +32,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -52,149 +51,148 @@ import java.util.regex.Pattern;
 @Import({springfox.documentation.spring.data.rest.configuration.SpringDataRestConfiguration.class})
 public class WebApp {
 
-    @Autowired
-    private UserService userService;
+  @Autowired
+  private UserService userService;
 
-    @Autowired
-    private OAuthUserCredentialsRepository oAuthUserCredentialsRepository;
+  @Autowired
+  private OAuthUserCredentialsRepository oAuthUserCredentialsRepository;
 
+  public static void main(String[] args) {
+    SpringApplication.run(WebApp.class, args);
+  }
 
-    public static void main(String[] args) {
-        SpringApplication.run(WebApp.class, args);
-    }
+  public String errorHandler() {
+    return "error";
+  }
 
-    public String errorHandler() {
-        return "error";
-    }
+  @GetMapping("swagger-ui")
+  public String home() {
+    return "redirect:/swagger-ui/index.html";
+  }
 
-    @GetMapping("swagger-ui")
-    public String home() {
-        return "redirect:/swagger-ui/index.html";
-    }
+  @Bean
+  public WebClient
+  rest(
+      ClientRegistrationRepository clients,
+      OAuth2AuthorizedClientRepository auth
+  ) {
+    ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 =
+        new ServletOAuth2AuthorizedClientExchangeFilterFunction(clients, auth);
 
-    @Bean
-    public WebClient
-    rest(
-            ClientRegistrationRepository clients,
-            OAuth2AuthorizedClientRepository auth
-    ) {
-        ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 =
-                new ServletOAuth2AuthorizedClientExchangeFilterFunction(clients, auth);
+    return WebClient.builder()
+        .filter(oauth2).build();
+  }
 
-        return WebClient.builder()
-                .filter(oauth2).build();
-    }
+  @Bean
+  public OAuth2UserService<OAuth2UserRequest, OAuth2User>
+  oauth2UserService(WebClient rest) {
+    DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
 
-    @Bean
-    public OAuth2UserService<OAuth2UserRequest, OAuth2User>
-    oauth2UserService(WebClient rest) {
-        DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
+    return request -> {
 
-        return request -> {
+      OAuth2User user = delegate.loadUser(request);
 
-            OAuth2User user = delegate.loadUser(request);
+      String providerName = request
+          .getClientRegistration()
+          .getRegistrationId()
+          .toUpperCase(Locale.ROOT);
 
-            String providerName = request
-                    .getClientRegistration()
-                    .getRegistrationId()
-                    .toUpperCase(Locale.ROOT);
+      User userDetail = new User();
 
-            User userDetail = new User();
+      Optional<OAuthUserCredentials> oAuthUserCredentials =
+          Optional.of(new OAuthUserCredentials());
 
-            Optional<OAuthUserCredentials> oAuthUserCredentials =
-                    Optional.of(new OAuthUserCredentials());
+      String pictureUrl = "";
 
-            String pictureUrl = "";
+      AtomicReference<OAuthProvider> oAuthProvider = new AtomicReference<>();
 
-            AtomicReference<OAuthProvider> oAuthProvider = new AtomicReference<>();
+      Arrays.stream(OAuthProvider.values()).forEach(oAuthProvider1 -> {
+        if (oAuthProvider1.name().equals(providerName)) {
+          oAuthProvider.set(oAuthProvider1);
+        }
+      });
 
-            Arrays.stream(OAuthProvider.values()).forEach(oAuthProvider1 -> {
-                if (oAuthProvider1.name().equals(providerName)) {
-                    oAuthProvider.set(oAuthProvider1);
-                }
-            });
-
-            switch (oAuthProvider.get()) {
+      switch (oAuthProvider.get()) {
         /* case "github":
      user.getAttribute("id").toString(),
      user.getAttribute("login"),
      user.getAttribute("avatar_url") */
-                case FACEBOOK:
-                    oAuthUserCredentials = oAuthUserCredentialsRepository
-                            .findByAccountIdAndProvider(
-                                    user.getAttribute("id"),
-                                    OAuthProvider.FACEBOOK.name()
-                            );
+        case FACEBOOK:
+          oAuthUserCredentials = oAuthUserCredentialsRepository
+              .findByAccountIdAndProvider(
+                  user.getAttribute("id"),
+                  OAuthProvider.FACEBOOK.name()
+              );
 
-                    class PictureData {
-                        String url;
-                        String height;
-                    }
+          class PictureData {
+            String url;
+            String height;
+          }
 
-                    class Picture {
-                        HashMap<String, PictureData> data;
-                    }
+          class Picture {
+            HashMap<String, PictureData> data;
+          }
 
-                    HashMap<String, Object> picture = user.getAttribute("picture");
+          HashMap<String, Object> picture = user.getAttribute("picture");
 
 
-                    if (picture != null) {
-                        LinkedHashMap<String, Object> pictureData =
-                                ((LinkedHashMap<String, Object>) picture.get("data"));
-                        pictureUrl = pictureData.get("url").toString();
-                    }
+          if (picture != null) {
+            LinkedHashMap<String, Object> pictureData =
+                ((LinkedHashMap<String, Object>) picture.get("data"));
+            pictureUrl = pictureData.get("url").toString();
+          }
 
-                    userDetail = new User(
-                            user.getAttribute("name"),
-                            user.getAttribute("email"),
-                            Optional.empty()
-                    );
+          userDetail = new User(
+              user.getAttribute("name"),
+              user.getAttribute("email"),
+              Optional.empty()
+          );
 
-                    break;
-                case GOOGLE:
+          break;
+        case GOOGLE:
 
-                    pictureUrl = user.getAttribute("picture");
-                    oAuthUserCredentials = oAuthUserCredentialsRepository
-                            .findByAccountIdAndProvider(
-                                    user.getAttribute("sub"),
-                                    OAuthProvider.GOOGLE.name()
-                            );
+          pictureUrl = user.getAttribute("picture");
+          oAuthUserCredentials = oAuthUserCredentialsRepository
+              .findByAccountIdAndProvider(
+                  user.getAttribute("sub"),
+                  OAuthProvider.GOOGLE.name()
+              );
 
-                    userDetail = new User(
-                            user.getAttribute("name"),
-                            user.getAttribute("email"),
-                            Optional.empty()
-                    );
+          userDetail = new User(
+              user.getAttribute("name"),
+              user.getAttribute("email"),
+              Optional.empty()
+          );
 
-                    break;
-            }
+          break;
+      }
 
-            if (!oAuthUserCredentials.isPresent()) {
+      if (!oAuthUserCredentials.isPresent()) {
 
-                userDetail.setUsername(UUID.randomUUID().toString());
-                userDetail.setPassword(UUID.randomUUID().toString());
+        userDetail.setUsername(UUID.randomUUID().toString());
+        userDetail.setPassword(UUID.randomUUID().toString());
 
-                User newUser = this.userService.addUser(userDetail);
+        User newUser = this.userService.addUser(userDetail);
 
-                OAuthUserCredentials oAuthUserCredentialsNew = new OAuthUserCredentials();
-                oAuthUserCredentialsNew.setUser(newUser);
-                oAuthUserCredentialsNew.setPicture(pictureUrl);
+        OAuthUserCredentials oAuthUserCredentialsNew = new OAuthUserCredentials();
+        oAuthUserCredentialsNew.setUser(newUser);
+        oAuthUserCredentialsNew.setPicture(pictureUrl);
 
-                switch (oAuthProvider.get()) {
-                    case FACEBOOK:
-                        oAuthUserCredentialsNew.setAccountId(user.getAttribute("id"));
-                        oAuthUserCredentialsNew.setProvider(OAuthProvider.FACEBOOK.name());
-                        break;
-                    case GOOGLE:
-                        oAuthUserCredentialsNew.setAccountId(user.getAttribute("sub"));
-                        oAuthUserCredentialsNew.setProvider(OAuthProvider.GOOGLE.name());
-                        break;
-                }
+        switch (oAuthProvider.get()) {
+          case FACEBOOK:
+            oAuthUserCredentialsNew.setAccountId(user.getAttribute("id"));
+            oAuthUserCredentialsNew.setProvider(OAuthProvider.FACEBOOK.name());
+            break;
+          case GOOGLE:
+            oAuthUserCredentialsNew.setAccountId(user.getAttribute("sub"));
+            oAuthUserCredentialsNew.setProvider(OAuthProvider.GOOGLE.name());
+            break;
+        }
 
-                this.oAuthUserCredentialsRepository.save(oAuthUserCredentialsNew);
-            } else {
-                return user;
-            }
+        this.oAuthUserCredentialsRepository.save(oAuthUserCredentialsNew);
+      } else {
+        return user;
+      }
 
 
       /*
@@ -217,86 +215,86 @@ public class WebApp {
       }
      */
 
-            throw new OAuth2AuthenticationException(new OAuth2Error("invalid_token", "Not in Spring Team", ""));
-        };
-    }
+      throw new OAuth2AuthenticationException(new OAuth2Error("invalid_token", "Not in Spring Team", ""));
+    };
+  }
 
-    private Consumer<Map<String, Object>>
-    oauth2AuthorizedClient(OAuth2AuthorizedClient client) {
-        return some -> {
-            System.out.println(some);
-            some.put("tmp", client.getPrincipalName());
-        };
-    }
+  private Consumer<Map<String, Object>>
+  oauth2AuthorizedClient(OAuth2AuthorizedClient client) {
+    return some -> {
+      System.out.println(some);
+      some.put("tmp", client.getPrincipalName());
+    };
+  }
 
-    private Predicate<String> categoryPaths() {
-        Pattern pattern_a = Pattern.compile(".*/category.*");
-        Pattern pattern_b = Pattern.compile("..*/category");
-        Pattern pattern_c = Pattern.compile(".*/categories");
+  private Predicate<String> categoryPaths() {
+    Pattern pattern_a = Pattern.compile(".*/category.*");
+    Pattern pattern_b = Pattern.compile("..*/category");
+    Pattern pattern_c = Pattern.compile(".*/categories");
 
-        return pattern_a.asPredicate()
-                .or(pattern_b.asPredicate())
-                .or(pattern_c.asPredicate());
-    }
+    return pattern_a.asPredicate()
+        .or(pattern_b.asPredicate())
+        .or(pattern_c.asPredicate());
+  }
 
-    @Bean
-    public Docket userApi() {
-        AuthorizationScope[] authScopes = new AuthorizationScope[1];
-        authScopes[0] = new AuthorizationScopeBuilder()
-                .scope("read")
-                .description("read access")
-                .build();
-        SecurityReference securityReference = SecurityReference.builder()
-                .reference("test")
-                .scopes(authScopes)
-                .build();
+  @Bean
+  public Docket userApi() {
+    AuthorizationScope[] authScopes = new AuthorizationScope[1];
+    authScopes[0] = new AuthorizationScopeBuilder()
+        .scope("read")
+        .description("read access")
+        .build();
+    SecurityReference securityReference = SecurityReference.builder()
+        .reference("test")
+        .scopes(authScopes)
+        .build();
 
-        List<SecurityContext> securityContexts =
-                Collections.singletonList(
-                        SecurityContext
-                                .builder()
-                                .securityReferences(Collections.singletonList(securityReference))
-                                .build()
-                );
-
-        return new Docket(DocumentationType.SWAGGER_2)
-                .securitySchemes(Collections.singletonList(new BasicAuth("test")))
-                .securityContexts(securityContexts)
-                .groupName("user-api")
-                .apiInfo(apiInfo())
-                .select()
-                .paths(input -> input.contains("user"))
-                .build();
-    }
-
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Springfox petstore API")
-                .description("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum " +
-                        "has been the industry's standard dummy text ever since the 1500s, when an unknown printer "
-                        + "took a " +
-                        "galley of type and scrambled it to make a type specimen book. It has survived not only five " +
-                        "centuries, but also the leap into electronic typesetting, remaining essentially unchanged. " +
-                        "It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum " +
-                        "passages, and more recently with desktop publishing software like Aldus PageMaker including " +
-                        "versions of Lorem Ipsum.")
-                .termsOfServiceUrl("http://springfox.io")
-                .contact(new Contact("springfox", "", ""))
-                .license("Apache License Version 2.0")
-                .licenseUrl("https://github.com/springfox/springfox/blob/master/LICENSE")
-                .version("2.0")
-                .build();
-    }
-
-    @Bean
-    public Docket categoryApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("category-api")
-                .apiInfo(apiInfo())
-                .select()
-                .paths(categoryPaths())
+    List<SecurityContext> securityContexts =
+        Collections.singletonList(
+            SecurityContext
+                .builder()
+                .securityReferences(Collections.singletonList(securityReference))
                 .build()
-                .ignoredParameterTypes(ApiIgnore.class)
-                .enableUrlTemplating(true);
-    }
+        );
+
+    return new Docket(DocumentationType.SWAGGER_2)
+        .securitySchemes(Collections.singletonList(new BasicAuth("test")))
+        .securityContexts(securityContexts)
+        .groupName("user-api")
+        .apiInfo(apiInfo())
+        .select()
+        .paths(input -> input.contains("user"))
+        .build();
+  }
+
+  private ApiInfo apiInfo() {
+    return new ApiInfoBuilder()
+        .title("Springfox petstore API")
+        .description("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum " +
+            "has been the industry's standard dummy text ever since the 1500s, when an unknown printer "
+            + "took a " +
+            "galley of type and scrambled it to make a type specimen book. It has survived not only five " +
+            "centuries, but also the leap into electronic typesetting, remaining essentially unchanged. " +
+            "It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum " +
+            "passages, and more recently with desktop publishing software like Aldus PageMaker including " +
+            "versions of Lorem Ipsum.")
+        .termsOfServiceUrl("http://springfox.io")
+        .contact(new Contact("springfox", "", ""))
+        .license("Apache License Version 2.0")
+        .licenseUrl("https://github.com/springfox/springfox/blob/master/LICENSE")
+        .version("2.0")
+        .build();
+  }
+
+  @Bean
+  public Docket categoryApi() {
+    return new Docket(DocumentationType.SWAGGER_2)
+        .groupName("category-api")
+        .apiInfo(apiInfo())
+        .select()
+        .paths(categoryPaths())
+        .build()
+        .ignoredParameterTypes(ApiIgnore.class)
+        .enableUrlTemplating(true);
+  }
 }
