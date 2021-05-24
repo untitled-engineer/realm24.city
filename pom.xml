@@ -55,6 +55,7 @@
     </pluginRepositories>
 
     <dependencies>
+
         <!-- spring.boot -->
 
 		<dependency>
@@ -94,9 +95,6 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
             <version>${springVersion}</version>
         </dependency>
-
-        <!-- spring.boot -->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -123,22 +121,16 @@
             <artifactId>spring-boot-maven-plugin</artifactId>
             <version>${springVersion}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${springVersion}</version>
+        </dependency>
         <!-- spring.security -->
 
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>5.4.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <version>5.4.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-client</artifactId>
+            <artifactId>spring-security-bom</artifactId>
             <version>5.4.6</version>
         </dependency>
 
@@ -191,7 +183,19 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.5.8</version>
+            <version>1.5.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-data-rest</artifactId>
+            <version>1.5.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-security</artifactId>
+            <version>1.5.9</version>
         </dependency>
 
     </dependencies>
